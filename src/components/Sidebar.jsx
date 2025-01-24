@@ -54,7 +54,7 @@ export default function Sidebar() {
           {/* Add Chart Widget Button */}
           <button
             onClick={() => addWidget('chart')}
-            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-300 transition-colors"
             title="Add Chart Widget"
           >
             <BarChart className="text-blue-500" size={20} />
@@ -66,7 +66,7 @@ export default function Sidebar() {
           {/* Add Text Widget Button */}
           <button
             onClick={() => addWidget('text')}
-            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-300 transition-colors"
             title="Add Text Widget"
           >
             <Type className="text-green-500" size={20} />
@@ -78,7 +78,7 @@ export default function Sidebar() {
           {/* Add Todo Widget Button */}
           <button
             onClick={() => addWidget('todo')}
-            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-300 transition-colors"
             title="Add Todo Widget"
           >
             <ListTodo className="text-purple-500" size={20} />
@@ -90,7 +90,7 @@ export default function Sidebar() {
           {/* Add Image Widget Button */}
           <button
             onClick={() => addWidget('image')}
-            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-300 transition-colors"
             title="Add Image Widget"
           >
             <Image className="text-red-500" size={20} />

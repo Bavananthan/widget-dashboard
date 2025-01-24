@@ -56,16 +56,12 @@ export default function Dashboard() {
   return (
     <div
       ref={containerRef}
-      className={`flex-1 p-4 overflow-auto ${
-        state.isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'
-      }`}
+      className={`flex-1 p-4 overflow-auto ${state.isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'}`}
     >
       {state.widgets.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-center">
           <h2 className="text-2xl font-semibold mb-4">Welcome to your Dashboard</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Get started by adding widgets from the sidebar
-          </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">Get started by adding widgets from the sidebar</p>
         </div>
       ) : (
         <GridLayout
@@ -85,7 +81,7 @@ export default function Dashboard() {
           {state.widgets.map((widget) => {
             const Widget = widgetComponents[widget.type];
 
-            // Determine the widget size based on screen size
+            // Determine the widget size based on screen size, but allow resizing
             const layout = state.layouts.find((l) => l.i === widget.id) || {
               w: 4, // Default width for small screens
               h: 6, // Default height for small screens
@@ -95,19 +91,19 @@ export default function Dashboard() {
               minH: 4,
             };
 
-            // Adjust widget size based on screen width
+            // Dynamically adjust the widget size based on screen width
             if (cols === 12) {
-              layout.w = 5; // On desktop, use larger widget width
-              layout.h = 6; // Keep default height
+              layout.w = Math.max(4, layout.w); // Ensure a minimum width for larger screens
+              layout.h = Math.max(4, layout.h); // Ensure a minimum height
             } else if (cols === 9) {
-              layout.w = 4; // On medium screens, use medium width
-              layout.h = 5; // Adjust height
+              layout.w = Math.max(3, layout.w); // Medium screens
+              layout.h = Math.max(4, layout.h);
             } else if (cols === 6) {
-              layout.w = 3; // On smaller screens, use smaller width
-              layout.h = 4; // Adjust height
+              layout.w = Math.max(2, layout.w); // Smaller screens
+              layout.h = Math.max(3, layout.h);
             } else {
-              layout.w = 4; // On mobile, use very small width
-              layout.h = 3; // Adjust height
+              layout.w = Math.max(2, layout.w); // Mobile
+              layout.h = Math.max(2, layout.h);
             }
 
             return (

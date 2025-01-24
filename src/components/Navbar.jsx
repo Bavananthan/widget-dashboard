@@ -39,7 +39,7 @@ export default function Navbar() {
           {/* Theme toggle button */}
           <button
             onClick={() => dispatch({ type: 'TOGGLE_THEME' })}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-400 transition-colors"
             title="Toggle Theme"
           >
             {state.isDarkMode ? <Sun size={24} /> : <Moon size={24} />}

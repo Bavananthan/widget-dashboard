@@ -11,6 +11,7 @@ const SET_WIDGETS = 'SET_WIDGETS';
 const SET_LAYOUTS = 'SET_LAYOUTS';
 const SET_IS_DARK_MODE = 'SET_IS_DARK_MODE';
 const SET_IS_SIDEBAR_OPEN = 'SET_IS_SIDEBAR_OPEN';
+const RESET_DASHBOARD = 'RESET_DASHBOARD';
 
 const DashboardContext = createContext();
 
@@ -47,6 +48,12 @@ function dashboardReducer(state, action) {
       return { ...state, isDarkMode: action.payload };
     case SET_IS_SIDEBAR_OPEN:
       return { ...state, isSidebarOpen: action.payload };
+      case 'RESET_DASHBOARD':
+  return {
+    ...state,
+    widgets: [],
+    layouts: [],
+  };
     default:
       return state;
   }

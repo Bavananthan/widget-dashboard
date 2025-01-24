@@ -17,20 +17,37 @@ const widgetComponents = {
 
 export default function Dashboard() {
   const { state, dispatch } = useDashboard();
-  const [width, setWidth] = useState(1200);
+  const [cols, setCols] = useState(12); // Default number of columns
+  const [rowHeight, setRowHeight] = useState(30); // Default row height
   const containerRef = React.useRef(null);
 
   useEffect(() => {
-    const updateWidth = () => {
+    const updateLayout = () => {
       if (containerRef.current) {
-        setWidth(containerRef.current.offsetWidth);
+        const width = containerRef.current.offsetWidth;
+
+        // Adjust number of columns based on container width
+        if (width >= 1200) {
+          setCols(12); // Large screen (desktop)
+          setRowHeight(30); // Default row height for large screen
+        } else if (width >= 900) {
+          setCols(9); // Medium screen (tablet/large tablet)
+          setRowHeight(25); // Adjust row height for medium screen
+        } else if (width >= 600) {
+          setCols(6); // Smaller screen (portrait tablet)
+          setRowHeight(20); // Adjust row height for smaller screen
+        } else {
+          setCols(4); // Smallest screen (mobile)
+          setRowHeight(15); // Adjust row height for mobile
+        }
       }
     };
 
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
-  }, [state.isSidebarOpen]);
+    // Run on mount and when screen resizes
+    updateLayout();
+    window.addEventListener('resize', updateLayout);
+    return () => window.removeEventListener('resize', updateLayout);
+  }, []);
 
   const onLayoutChange = (layout) => {
     dispatch({ type: 'UPDATE_LAYOUTS', payload: layout });
@@ -54,9 +71,9 @@ export default function Dashboard() {
         <GridLayout
           className="layout"
           layout={state.layouts}
-          cols={12}
-          rowHeight={30}
-          width={width - 32} // Subtract padding
+          cols={cols} // Use dynamic column count
+          rowHeight={rowHeight} // Use dynamic row height
+          width={containerRef.current ? containerRef.current.offsetWidth - 32 : 1200} // Subtract padding
           onLayoutChange={onLayoutChange}
           isDraggable={true}
           isResizable={true}
@@ -67,14 +84,32 @@ export default function Dashboard() {
         >
           {state.widgets.map((widget) => {
             const Widget = widgetComponents[widget.type];
-            const layout = state.layouts.find(l => l.i === widget.id) || {
-              w: 4,
-              h: 6,
+
+            // Determine the widget size based on screen size
+            const layout = state.layouts.find((l) => l.i === widget.id) || {
+              w: 4, // Default width for small screens
+              h: 6, // Default height for small screens
               x: 0,
               y: 0,
               minW: 3,
-              minH: 4
+              minH: 4,
             };
+
+            // Adjust widget size based on screen width
+            if (cols === 12) {
+              layout.w = 5; // On desktop, use larger widget width
+              layout.h = 6; // Keep default height
+            } else if (cols === 9) {
+              layout.w = 4; // On medium screens, use medium width
+              layout.h = 5; // Adjust height
+            } else if (cols === 6) {
+              layout.w = 3; // On smaller screens, use smaller width
+              layout.h = 4; // Adjust height
+            } else {
+              layout.w = 4; // On mobile, use very small width
+              layout.h = 3; // Adjust height
+            }
+
             return (
               <div key={widget.id} data-grid={layout} className="widget-container">
                 <Widget widget={widget} />

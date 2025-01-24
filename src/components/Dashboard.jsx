@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GridLayout from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useDashboard } from '../context/DashboardContext';
@@ -7,6 +7,8 @@ import ChartWidget from './widgets/ChartWidget';
 import TextWidget from './widgets/TextWidget';
 import TodoWidget from './widgets/TodoWidget';
 import ImageWidget from './widgets/ImageWidget';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const widgetComponents = {
   chart: ChartWidget,
@@ -17,28 +19,29 @@ const widgetComponents = {
 
 export default function Dashboard() {
   const { state, dispatch } = useDashboard();
-  const [width, setWidth] = useState(1200);
-  const containerRef = React.useRef(null);
 
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setWidth(containerRef.current.offsetWidth);
-      }
-    };
+  const onLayoutChange = (currentLayout, allLayouts) => {
+    dispatch({ type: 'UPDATE_LAYOUTS', payload: allLayouts });
+  };
 
-    updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
-  }, [state.isSidebarOpen]);
+  const breakpoints = {
+    lg: 1200, // Large screens
+    md: 996,  // Medium screens
+    sm: 768,  // Small screens (tablets)
+    xs: 480,  // Extra small screens (phones)
+    xxs: 0,   // Very small devices
+  };
 
-  const onLayoutChange = (layout) => {
-    dispatch({ type: 'UPDATE_LAYOUTS', payload: layout });
+  const cols = {
+    lg: 12, // Columns for large screens
+    md: 10, // Columns for medium screens
+    sm: 8,  // Columns for small screens
+    xs: 4,  // Columns for extra small screens
+    xxs: 2, // Columns for very small devices
   };
 
   return (
     <div
-      ref={containerRef}
       className={`flex-1 p-4 overflow-auto ${
         state.isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'
       }`}
@@ -51,12 +54,12 @@ export default function Dashboard() {
           </p>
         </div>
       ) : (
-        <GridLayout
+        <ResponsiveGridLayout
           className="layout"
-          layout={state.layouts}
-          cols={12}
+          layouts={state.layouts}
+          breakpoints={breakpoints}
+          cols={cols}
           rowHeight={30}
-          width={width - 32} // Subtract padding
           onLayoutChange={onLayoutChange}
           isDraggable={true}
           isResizable={true}
@@ -67,13 +70,13 @@ export default function Dashboard() {
         >
           {state.widgets.map((widget) => {
             const Widget = widgetComponents[widget.type];
-            const layout = state.layouts.find(l => l.i === widget.id) || {
+            const layout = state.layouts.find((l) => l.i === widget.id) || {
               w: 4,
               h: 6,
               x: 0,
               y: 0,
               minW: 3,
-              minH: 4
+              minH: 4,
             };
             return (
               <div key={widget.id} data-grid={layout} className="widget-container">
@@ -81,7 +84,7 @@ export default function Dashboard() {
               </div>
             );
           })}
-        </GridLayout>
+        </ResponsiveGridLayout>
       )}
     </div>
   );
